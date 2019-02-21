@@ -63,15 +63,15 @@ class CollectLinks:
         return elem
 
     def google(self, keyword, add_url=""):
-        self.browser.get("https://www.google.com/search?q={}&source=lnms&tbm=isch{}".format(keyword, add_url))
+        self.browser.get("https://www.google.com/search?q={}&source=lnms&tbm=isch{}".format(keyword, add_url))  # 브라우저 열기, add_url은 cmd에서 실행했을때의 매개변수 값이 들어감
 
         time.sleep(1)
 
         print('Scrolling down')
 
-        elem = self.browser.find_element_by_tag_name("body")
+        elem = self.browser.find_element_by_tag_name("body")    # 정확히 뭔지는 모르겠지만 브라우저의 body 부분을 컨트롤 하는것 같다. 태그 이름이 name에 해당하는 요소를 하나 추출
 
-        for i in range(60):
+        for i in range(60):     # 60회 페이지 다운
             elem.send_keys(Keys.PAGE_DOWN)
             time.sleep(0.2)
 
@@ -80,26 +80,27 @@ class CollectLinks:
             self.wait_and_click('//input[@id="smb"]')
 
             for i in range(60):
-                elem.send_keys(Keys.PAGE_DOWN)
+                elem.send_keys(Keys.PAGE_DOWN)  # value에 해당하는 키를 입력
                 time.sleep(0.2)
 
         except ElementNotVisibleException:
             pass
 
         photo_grid_boxes = self.browser.find_elements(By.XPATH, '//div[@class="rg_bx rg_di rg_el ivg-i"]')
+        print("photo grid=========", photo_grid_boxes)
 
         print('Scraping links')
 
-        links = []
+        links = []  # 다운받을 이미지 저장할 리스트 생성
 
         for box in photo_grid_boxes:
             try:
-                imgs = box.find_elements(By.TAG_NAME, 'img')
+                imgs = box.find_elements(By.TAG_NAME, 'img')    # 태그가 'img'인 것을 찾음
 
                 for img in imgs:
-                    src = img.get_attribute("src")
-                    if src[0] != 'd':
-                        links.append(src)
+                    src = img.get_attribute("src")      # imgs 요소의 속성 중 src에 해당하는 속성의 값을 추출하여 src 변수에 저장
+                    if src[0] != 'd':       # src[0] 가 'd'가 아니면
+                        links.append(src)   # links 에 src 추가
 
             except Exception as e:
                 print('[Exception occurred while collecting links from google] {}'.format(e))
